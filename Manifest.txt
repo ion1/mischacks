@@ -1,0 +1,9 @@
+COPYING
+History.txt
+Manifest.txt
+README.txt
+Rakefile
+lib/mischacks.rb
+mischacks.gemspec
+spec/mischacks_spec.rb
+spec/spec_helper.rb
