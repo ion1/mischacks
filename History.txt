@@ -2,6 +2,7 @@
 
 * Implement overwrite, a method to safely replace a file.
 * Update README.
+* Move exception printing from sh to catching_exit.
 
 === 0.0.3 / 2009-06-28
 

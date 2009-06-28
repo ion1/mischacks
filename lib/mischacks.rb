@@ -30,12 +30,8 @@ module MiscHacks
 
     fork_and_check do
       do_and_exit! do
-        begin
-          env.each_pair do |k, v| ENV[k.to_s] = v.to_s end
-          exec *(%W{sh -e -c #{cmd} sh} + args.map {|a| a.to_s })
-        rescue Exception => e
-          warn e.to_formatted_string
-        end
+        env.each_pair do |k, v| ENV[k.to_s] = v.to_s end
+        exec *(%W{sh -e -c #{cmd} sh} + args.map {|a| a.to_s })
       end
     end
 
@@ -60,6 +56,8 @@ module MiscHacks
       yield
     rescue SystemExit => e
       status = e.status
+    rescue Exception => e
+      warn e.to_formatted_string
     ensure
       final_proc.call status
     end

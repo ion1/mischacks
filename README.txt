@@ -15,6 +15,8 @@ do_and_exit, do_and_exit!:: Run a block. If the block does not run exit!, a
 successful exec or equivalent, run exit(1) or exit!(1) ourselves. Useful to
 make sure a forked block either runs a successful exec or dies.
 
+Any exceptions from the block are printed to standard error.
+
 overwrite:: Safely replace a file. Writes to a temporary file and then moves it
 over the old file.
 
