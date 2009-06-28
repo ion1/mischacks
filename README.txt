@@ -4,7 +4,8 @@
 
 == DESCRIPTION:
 
-Safely pass untrusted parameters to sh scripts
+sh::        Safely pass untrusted parameters to sh scripts.
+overwrite:: Safely replace a file.
 
 == FEATURES/PROBLEMS:
 
@@ -14,12 +15,20 @@ ever use an untrusted variable as a command.
 
 == SYNOPSIS:
 
+  # sh
+
   MiscHacks.sh %q{
     diff -u "$1" "$2" | tr a-z A-Z >"$output"
   }, '/dev/null', '/etc/motd', :output => 'foo'
 
   unsafe_str = %q{" 'foo' $(bar) `baz` "}
   MiscHacks.sh 'printf "%s\n" "$1"', unsafe_str
+
+  # overwrite
+
+  MiscHacks.overwrite 'myconfig' do |io|
+    io << config.to_yaml
+  end
 
 == REQUIREMENTS:
 

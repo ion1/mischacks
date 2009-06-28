@@ -74,6 +74,68 @@ module MiscHacks
 
     nil
   end
+
+  def self.overwrite path, mode=nil
+    begin
+      stat = File.stat path
+
+      raise ArgumentError, "Not a file: #{path}",   caller unless stat.file?
+      raise ArgumentError, "Not writable: #{path}", caller unless stat.writable?
+
+      mode ||= stat.mode & 0777
+    rescue Errno::ENOENT
+      stat = nil
+    end
+
+    temppath, io = try_n_times do
+      t  = tempname_for path
+      io = File.open t, File::RDWR|File::CREAT|File::EXCL
+      [t, io]
+    end
+
+    begin
+      ret = yield io
+
+      File.chmod mode, temppath if mode
+
+      File.rename temppath, path
+
+    rescue
+      File.unlink temppath
+      raise
+
+    ensure
+      io.close
+    end
+
+    ret
+  end
+
+  def self.tempname_for path
+    dirname  = File.dirname  path
+    basename = File.basename path
+
+    '%s/.%s.%s%s%s' % [
+      dirname,
+      basename,
+      Time.now.to_i.to_s(36),
+      $$.to_s(36),
+      rand(1<<32).to_s(36)
+    ]
+  end
+
+  def self.try_n_times n=10
+    i = 0
+    begin
+      ret = yield
+    rescue
+      i += 1
+      retry if i < n
+      raise
+    end
+
+    ret
+  end
 end
 
 module MiscHacks

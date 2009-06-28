@@ -17,6 +17,9 @@ require File.expand_path(File.dirname(__FILE__)+'/spec_helper.rb')
 require 'mischacks'
 
 require 'digest/sha1'
+require 'fileutils'
+require 'set'
+require 'tmpdir'
 
 mh = MiscHacks
 ce = MiscHacks::ChildError
@@ -174,6 +177,93 @@ describe mh do
 
       lambda do test.call unsafe_str, checksum end.should_not raise_error
       lambda do test.call 'foo',      checksum end.should raise_error ce
+    end
+  end
+
+  describe 'overwrite' do
+    before :all do
+      @dir      = Dir.mktmpdir
+      @file     = "#{@dir}/foo"
+      @content0 = "bar\n"
+      @content1 = "baz\n"
+      @mode0    = 0714
+      @mode1    = 0755
+    end
+
+    after :all do
+      FileUtils.rm_rf @dir
+    end
+
+    it 'should create a fresh file' do
+      mh.overwrite @file do |io|
+        io << @content0
+        File.exists?(@file).should == false
+      end
+      File.read(@file).should == @content0
+    end
+
+    it 'should overwrite a file' do
+      mh.overwrite @file do |io|
+        io << @content1
+        File.read(@file).should == @content0
+      end
+      File.read(@file).should == @content1
+    end
+
+    it 'should retain the mode' do
+      File.chmod @mode0, @file
+      mh.overwrite @file do end
+      (File.stat(@file).mode & 07777).should == @mode0
+    end
+
+    it 'should set the mode' do
+      mh.overwrite @file, @mode1 do end
+      (File.stat(@file).mode & 07777).should == @mode1
+    end
+  end
+
+  describe 'tempname_for' do
+    it 'should generate an unique temporary path' do
+      path = '/foo/bar/baz'
+      tempnames = (0...10).map { mh.tempname_for(path) }.to_set
+
+      # It is very, very unlikely there are duplicates.
+      tempnames.length.should > 8
+
+      tempnames.each do |n|
+        n.should =~ %r{\A/foo/bar/.baz.[a-z0-9]+\z}
+      end
+    end
+  end
+
+  describe 'try_n_times' do
+    it 'should try 10 times' do
+      e = Class.new RuntimeError
+
+      i = 0
+      mh.try_n_times do
+        i += 1
+        42
+      end.should == 42
+      i.should == 1
+
+      i = 0
+      mh.try_n_times do
+        i += 1
+        raise e if i < 10
+        42
+      end.should == 42
+      i.should == 10
+
+      i = 0
+      lambda do
+        mh.try_n_times do
+          i += 1
+          raise e if i < 11
+          42
+        end
+      end.should raise_error e
+      i.should == 10
     end
   end
 
