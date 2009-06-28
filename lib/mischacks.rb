@@ -25,7 +25,7 @@ module MiscHacks
     end
   end
 
-  def self.checking_exit_status
+  def self.fork_and_check
     fork do
       yield
     end.tap do |pid|
@@ -56,7 +56,7 @@ module MiscHacks
   def self.sh cmd, *args
     env = if args.last.is_a? Hash then args.pop else {} end
 
-    checking_exit_status do
+    fork_and_check do
       do_and_exit! do
         begin
           env.each_pair do |k, v| ENV[k.to_s] = v.to_s end

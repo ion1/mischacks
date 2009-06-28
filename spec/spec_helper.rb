@@ -22,7 +22,7 @@ Spec::Matchers.define :exit_with do |expected|
     @status = 0
 
     begin
-      MiscHacks.checking_exit_status do
+      MiscHacks.fork_and_check do
         block.call
       end
     rescue MiscHacks::ChildError => e

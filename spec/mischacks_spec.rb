@@ -22,18 +22,18 @@ mh = MiscHacks
 ce = MiscHacks::ChildError
 
 describe mh do
-  describe 'checking_exit_status' do
+  describe 'fork_and_check' do
     it 'should raise an error when child fails' do
-      lambda do mh.checking_exit_status do exit  1 end end.should raise_error ce
-      lambda do mh.checking_exit_status do exit! 1 end end.should raise_error ce
+      lambda do mh.fork_and_check do exit  1 end end.should raise_error ce
+      lambda do mh.fork_and_check do exit! 1 end end.should raise_error ce
 
-      lambda do mh.checking_exit_status do exit  0 end end.should_not raise_error
-      lambda do mh.checking_exit_status do exit! 0 end end.should_not raise_error
+      lambda do mh.fork_and_check do exit  0 end end.should_not raise_error
+      lambda do mh.fork_and_check do exit! 0 end end.should_not raise_error
     end
 
     it 'should handle exec' do
-      lambda do mh.checking_exit_status do exec 'false' end end.should raise_error ce
-      lambda do mh.checking_exit_status do exec 'true'  end end.should_not raise_error
+      lambda do mh.fork_and_check do exec 'false' end end.should raise_error ce
+      lambda do mh.fork_and_check do exec 'true'  end end.should_not raise_error
     end
   end
 
