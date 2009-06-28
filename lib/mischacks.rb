@@ -36,21 +36,26 @@ module MiscHacks
     nil
   end
 
-  def self.do_and_exit bang=false
-    my_exit = if bang then method :exit! else method :exit end
+  def self.catching_exit final_proc, fallthrough_status
+    status = fallthrough_status
 
-    status = 1
     begin
       yield
     rescue SystemExit => e
       status = e.status
     ensure
-      my_exit.call status
+      final_proc.call status
     end
+
+    status
   end
 
-  def self.do_and_exit! &block
-    do_and_exit true, &block
+  def self.do_and_exit status=1, &block
+    catching_exit method(:exit), status, &block
+  end
+
+  def self.do_and_exit! status=1, &block
+    catching_exit method(:exit!), status, &block
   end
 
   def self.sh cmd, *args

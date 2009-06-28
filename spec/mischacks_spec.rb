@@ -37,12 +37,50 @@ describe mh do
     end
   end
 
+  describe 'catching_exit' do
+    it 'should call final_proc with the fallthrough status when the block does not exit' do
+      [0, 1, 42, 255].each do |i|
+        foo = nil
+        mh.catching_exit(lambda {|status| foo = status }, 2) do end
+        foo.should == 2
+      end
+
+    end
+
+    it 'should call final_proc with the exit status when the block exits' do
+      [0, 1, 42, 255].each do |i|
+        foo = nil
+        mh.catching_exit(lambda {|status| foo = status }, 2) do exit i end
+        foo.should == i
+      end
+    end
+  end
+
   describe 'do_and_exit' do
-    it 'should have an exit status of 1 when the block does not exit' do
+    it 'should have the proper exit status when the block does not exit' do
       lambda do
         mh.do_and_exit do end
         exit 2  # Should never reach this.
       end.should exit_with 1
+
+      lambda do
+        mh.do_and_exit! do end
+        exit! 2  # Should never reach this.
+      end.should exit_with 1
+
+      [0, 1, 42, 255].each do |i|
+        lambda do
+          mh.do_and_exit i do end
+          exit 2  # Should never reach this.
+        end.should exit_with i
+      end
+
+      [0, 1, 42, 255].each do |i|
+        lambda do
+          mh.do_and_exit! i do end
+          exit! 2  # Should never reach this.
+        end.should exit_with i
+      end
     end
 
     it 'should have the proper exit status when the block exits' do
@@ -52,13 +90,20 @@ describe mh do
           exit 2  # Should never reach this.
         end.should exit_with i
       end
+
+      [0, 1, 42, 255].each do |i|
+        lambda do
+          mh.do_and_exit! do exit! i end
+          exit! 2  # Should never reach this.
+        end.should exit_with i
+      end
     end
 
     it 'should handle exec' do
       [0, 1, 42, 255].each do |i|
         lambda do
-          mh.do_and_exit do exec *%W{sh -c #{'exit "$1"'} sh #{i}} end
-          exit 2  # Should never reach this.
+          mh.do_and_exit! do exec *%W{sh -c #{'exit "$1"'} sh #{i}} end
+          exit! 2  # Should never reach this.
         end.should exit_with i
       end
     end
@@ -71,14 +116,6 @@ describe mh do
           exit 2
         end
       end.should exit_with 2
-
-      lambda do
-        begin
-          mh.do_and_exit true do end
-        rescue SystemExit => e
-          exit 2  # Should never reach this.
-        end
-      end.should exit_with 1
 
       lambda do
         begin

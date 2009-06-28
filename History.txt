@@ -1,6 +1,8 @@
 === UNRELEASED / 2009-06-28
 
 * Rename checking_exit_status as fork_and_check to make it clear it forks.
+* Add catching_exit, which is now used by the do_and_exit methods.
+* Pass a fallthrough exit status to do_and_exit.
 
 === 0.0.2 / 2009-06-28
 
