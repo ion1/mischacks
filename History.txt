@@ -1,4 +1,4 @@
-=== UNRELEASED / 2009-06-28
+=== 0.0.3 / 2009-06-28
 
 * Rename checking_exit_status as fork_and_check to make it clear it forks.
 * Add catching_exit, which is now used by the do_and_exit methods.

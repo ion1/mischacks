@@ -14,7 +14,7 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 module MiscHacks
-  VERSION = '0.0.2'
+  VERSION = '0.0.3'
 
   class ChildError < RuntimeError
     attr_reader :status
