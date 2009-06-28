@@ -1,6 +1,7 @@
 === UNRELEASED / 2009-06-28
 
 * Implement overwrite, a method to safely replace a file.
+* Update README.
 
 === 0.0.3 / 2009-06-28
 
