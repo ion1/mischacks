@@ -25,6 +25,56 @@ mh = MiscHacks
 ce = MiscHacks::ChildError
 
 describe mh do
+  describe 'sh' do
+    unsafe_str = %q{" 'foo' $(bar) `baz` "}
+    checksum   = Digest::SHA1.hexdigest unsafe_str
+
+    it "should raise #{ce} on error" do
+      good = ['true', '', 'printf ""']
+      bad  = ['false', 'exit 2', 'return 2']
+
+      bad.each do |c|
+        lambda do mh.sh c end.should raise_error ce
+      end
+
+      good.each do |c|
+        lambda do mh.sh c end.should_not raise_error
+      end
+    end
+
+    it 'should call sh with -e' do
+      lambda do mh.sh 'false; true' end.should raise_error ce
+    end
+
+    it 'should pass normal parameters safely' do
+      test = lambda do |str, sha|
+        mh.sh %q{
+          temp="$(mktemp -t mischacks.XXXXXXXXXX)"
+          trap 'rm -f "$temp"' 0 1 2 13 15
+          printf "%s" "$1" >"$temp"
+          printf "%s *%s\n" "$2" "$temp" | sha1sum -c >/dev/null 2>&1
+        }, str, sha
+      end
+
+      lambda do test.call unsafe_str, checksum end.should_not raise_error
+      lambda do test.call 'foo',      checksum end.should raise_error ce
+    end
+
+    it 'should pass environment variables safely' do
+      test = lambda do |str, sha|
+        mh.sh %q{
+          temp="$(mktemp -t mischacks.XXXXXXXXXX)"
+          trap 'rm -f "$temp"' 0 1 2 13 15
+          printf "%s" "$string" >"$temp"
+          printf "%s *%s\n" "$checksum" "$temp" | sha1sum -c >/dev/null 2>&1
+        }, :string => str, :checksum => sha
+      end
+
+      lambda do test.call unsafe_str, checksum end.should_not raise_error
+      lambda do test.call 'foo',      checksum end.should raise_error ce
+    end
+  end
+
   describe 'fork_and_check' do
     it 'should raise an error when child fails' do
       lambda do mh.fork_and_check do exit  1 end end.should raise_error ce
@@ -127,56 +177,6 @@ describe mh do
           exit 2  # Should never reach this.
         end
       end.should exit_with 1
-    end
-  end
-
-  describe 'sh' do
-    unsafe_str = %q{" 'foo' $(bar) `baz` "}
-    checksum   = Digest::SHA1.hexdigest unsafe_str
-
-    it "should raise #{ce} on error" do
-      good = ['true', '', 'printf ""']
-      bad  = ['false', 'exit 2', 'return 2']
-
-      bad.each do |c|
-        lambda do mh.sh c end.should raise_error ce
-      end
-
-      good.each do |c|
-        lambda do mh.sh c end.should_not raise_error
-      end
-    end
-
-    it 'should call sh with -e' do
-      lambda do mh.sh 'false; true' end.should raise_error ce
-    end
-
-    it 'should pass normal parameters safely' do
-      test = lambda do |str, sha|
-        mh.sh %q{
-          temp="$(mktemp -t mischacks.XXXXXXXXXX)"
-          trap 'rm -f "$temp"' 0 1 2 13 15
-          printf "%s" "$1" >"$temp"
-          printf "%s *%s\n" "$2" "$temp" | sha1sum -c >/dev/null 2>&1
-        }, str, sha
-      end
-
-      lambda do test.call unsafe_str, checksum end.should_not raise_error
-      lambda do test.call 'foo',      checksum end.should raise_error ce
-    end
-
-    it 'should pass environment variables safely' do
-      test = lambda do |str, sha|
-        mh.sh %q{
-          temp="$(mktemp -t mischacks.XXXXXXXXXX)"
-          trap 'rm -f "$temp"' 0 1 2 13 15
-          printf "%s" "$string" >"$temp"
-          printf "%s *%s\n" "$checksum" "$temp" | sha1sum -c >/dev/null 2>&1
-        }, :string => str, :checksum => sha
-      end
-
-      lambda do test.call unsafe_str, checksum end.should_not raise_error
-      lambda do test.call 'foo',      checksum end.should raise_error ce
     end
   end
 

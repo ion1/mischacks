@@ -25,6 +25,23 @@ module MiscHacks
     end
   end
 
+  def self.sh cmd, *args
+    env = if args.last.is_a? Hash then args.pop else {} end
+
+    fork_and_check do
+      do_and_exit! do
+        begin
+          env.each_pair do |k, v| ENV[k.to_s] = v.to_s end
+          exec *(%W{sh -e -c #{cmd} sh} + args.map {|a| a.to_s })
+        rescue Exception => e
+          warn e.to_formatted_string
+        end
+      end
+    end
+
+    nil
+  end
+
   def self.fork_and_check
     fork do
       yield
@@ -56,23 +73,6 @@ module MiscHacks
 
   def self.do_and_exit! status=1, &block
     catching_exit method(:exit!), status, &block
-  end
-
-  def self.sh cmd, *args
-    env = if args.last.is_a? Hash then args.pop else {} end
-
-    fork_and_check do
-      do_and_exit! do
-        begin
-          env.each_pair do |k, v| ENV[k.to_s] = v.to_s end
-          exec *(%W{sh -e -c #{cmd} sh} + args.map {|a| a.to_s })
-        rescue Exception => e
-          warn e.to_formatted_string
-        end
-      end
-    end
-
-    nil
   end
 
   def self.overwrite path, mode=nil
