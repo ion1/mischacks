@@ -85,6 +85,14 @@ ever use an untrusted variable as a command.
     File.open path, File::RDWR|File::CREAT|File::EXCL
   end
 
+  # Exception#to_formatted_string
+
+  begin
+    # Do something
+  rescue => e
+    warn e.to_formatted_string
+  end
+
 == REQUIREMENTS:
 
 * POSIX sh
