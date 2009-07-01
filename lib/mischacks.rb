@@ -127,14 +127,12 @@ module MiscHacks
   def self.try_n_times n=10
     i = 0
     begin
-      ret = yield
+      yield
     rescue
       i += 1
       retry if i < n
       raise
     end
-
-    ret
   end
 end
 
