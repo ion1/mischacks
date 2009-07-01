@@ -29,6 +29,9 @@ attempts (default 10) is exceeded.
 Exception#to_formatted_string:: Returns a string that looks like how Ruby would
 dump an uncaught exception.
 
+IO#best_datasync:: Tries fdatasync, falling back to fsync, falling back to
+flush.
+
 == FEATURES/PROBLEMS:
 
 The sh method is only safe if your sh script is safe. If unsure, add double

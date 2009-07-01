@@ -1,3 +1,7 @@
+=== UNRELEASED / 2009-06-28
+
+* Implement IO#best_datasync, have overwrite use it.
+
 === 0.0.4 / 2009-06-28
 
 * Implement overwrite, a method to safely replace a file.

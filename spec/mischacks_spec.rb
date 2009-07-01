@@ -292,6 +292,30 @@ describe mh do
       end
     end
   end
+
+  describe 'IOMixin best_datasync' do
+    before :all do
+      @dir     = Dir.mktmpdir
+      @file    = "#{@dir}/foo"
+      @content = "f"
+    end
+
+    after :all do
+      FileUtils.rm_rf @dir
+    end
+
+    it 'should at least do a flush' do
+      open @file, 'w' do |wio|
+        wio << @content
+
+        File.read(@file).should == ''
+
+        wio.best_datasync
+
+        File.read(@file).should == @content
+      end
+    end
+  end
 end
 
 # vim:set et sw=2 sts=2:

@@ -94,6 +94,8 @@ module MiscHacks
     begin
       ret = yield io
 
+      io.best_datasync
+
       File.chmod mode, temppath if mode
 
       File.rename temppath, path
@@ -151,6 +153,25 @@ end
 
 Exception.class_eval do
   include MiscHacks::ExceptionMixin
+end
+
+module MiscHacks
+  module IOMixin
+    def best_datasync
+      meths = [:fdatasync, :fsync, :flush]
+
+      begin
+        send meths.shift
+      rescue NoMethodError, NotImplementedError
+        retry unless meths.empty?
+        raise
+      end
+    end
+  end
+end
+
+IO.class_eval do
+  include MiscHacks::IOMixin
 end
 
 # vim:set et sw=2 sts=2:
