@@ -17,6 +17,12 @@ $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__)+'/../lib')
 
 require 'mischacks'
 
+class Object
+  def metaclass
+    class << self; self; end
+  end
+end
+
 Spec::Matchers.define :exit_with do |expected|
   match do |block|
     @status = 0

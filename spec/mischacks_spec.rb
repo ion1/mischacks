@@ -304,15 +304,75 @@ describe mh do
       FileUtils.rm_rf @dir
     end
 
-    it 'should at least do a flush' do
-      open @file, 'w' do |wio|
-        wio << @content
+    it 'should flush any buffered data to the OS' do
+      open @file, 'w' do |io|
+        io << @content
 
         File.read(@file).should == ''
 
-        wio.best_datasync
+        io.best_datasync
 
         File.read(@file).should == @content
+      end
+    end
+
+    sync_meths = [:fdatasync, :fsync, :flush]
+
+    sync_meths.length.times do |i|
+      sync_meths_dup = sync_meths.dup
+
+      fails    = sync_meths_dup.shift i
+      succeeds = sync_meths_dup.shift
+      ignored  = sync_meths_dup
+
+      desc = "should call #{succeeds}"
+
+      if fails.empty?
+        desc << " if available"
+      else
+        desc << " if #{fails.join(', ')} unavailable"
+      end
+
+      desc << " (ignoring #{ignored.join(', ')})" unless ignored.empty?
+
+      it desc do
+        [NoMethodError, NotImplementedError].each do |error|
+          open @file, 'w' do |io|
+            fails.each do |meth|
+              if error == NoMethodError
+                io.metaclass.send :undef_method, meth rescue nil
+              else
+                io.should_receive(meth).once.ordered.and_raise error
+              end
+            end
+
+            io.should_receive(succeeds).once.ordered.and_return nil
+
+            ignored.each do |meth|
+              io.should_not_receive(meth)
+            end
+
+            io.best_datasync
+          end
+        end
+      end
+    end
+
+    it "should fail if none of #{sync_meths.join(', ')} are available" do
+      [NoMethodError, NotImplementedError].each do |error|
+        lambda do
+          open @file, 'w' do |io|
+            sync_meths.each do |meth|
+              if error == NoMethodError
+                io.metaclass.send :undef_method, meth rescue nil
+              else
+                io.should_receive(meth).once.ordered.and_raise error
+              end
+            end
+
+            io.best_datasync
+          end
+        end.should raise_error error
       end
     end
   end

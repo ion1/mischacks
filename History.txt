@@ -1,6 +1,7 @@
 === UNRELEASED / UNRELEASED
 
 * Update README.
+* Test best_datasync more thoroughly.
 
 === 0.0.5 / 2009-06-28
 
