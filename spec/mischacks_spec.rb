@@ -375,6 +375,18 @@ describe mh do
         end.should raise_error error
       end
     end
+
+    it 'should pass other failures through' do
+      lambda do
+        open @file, 'w' do |io|
+          io.should_receive(:fdatasync).once.ordered.and_raise NotImplementedError
+          io.should_receive(:fsync).once.ordered.and_raise IOError
+          io.should_not_receive(:flush)
+
+          io.best_datasync
+        end
+      end.should raise_error IOError
+    end
   end
 end
 
