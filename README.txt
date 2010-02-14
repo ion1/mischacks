@@ -26,11 +26,10 @@ generated filename resides in the same directory as the original one.
 try_n_times:: Retries a block of code until it succeeds or a maximum number of
 attempts (default 10) is exceeded.
 
-Exception#to_formatted_string:: Returns a string that looks like how Ruby would
+Exception#to_formatted_string:: Return a string that looks like how Ruby would
 dump an uncaught exception.
 
-IO#best_datasync:: Tries fdatasync, falling back to fsync, falling back to
-flush.
+IO#best_datasync:: Try fdatasync, falling back to fsync, falling back to flush.
 
 == FEATURES/PROBLEMS:
 
