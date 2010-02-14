@@ -17,21 +17,29 @@ $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__)+'/lib')
 
 require 'rubygems'
 
-require 'hoe'
 require 'rake'
 require 'rake/clean'
 
 task :default => :spec
 
-Hoe.spec 'mischacks' do
-  developer 'Johan Kiviniemi', 'devel@johan.kiviniemi.name'
+begin
+  require 'jeweler'
+
+  Jeweler::Tasks.new do |gemspec|
+    gemspec.name = "mischacks"
+    gemspec.summary = "Miscellaneous methods that may or may not be useful"
+    gemspec.description = "sh: Safely pass untrusted parameters to sh scripts.  overwrite: Safely replace a file.  Exception#to_formatted_string: Return a string that looks like how Ruby would dump an uncaught exception."
+    gemspec.email = "devel@johan.kiviniemi.name"
+    gemspec.homepage = "http://johan.kiviniemi.name/software/mischacks/"
+    gemspec.authors = ["Johan Kiviniemi"]
+  end
+
+  Jeweler::GemcutterTasks.new
+
+rescue LoadError
+  puts "Jeweler not available. Install it with: gem install jeweler"
 end
 
-# http://blog.behindlogic.com/2008/10/auto-generate-your-manifest-and-gemspec.html
-desc "Generate manifest, gemspec"
-task :cultivate do
-  system 'touch Manifest.txt; rake -s check_manifest | patch'
-  system 'rake -s debug_gem >"$(basename "$(pwd)")".gemspec'
-end
+CLOBBER << %w{mischacks.gemspec pkg}
 
 # vim:set et sw=2 sts=2:
