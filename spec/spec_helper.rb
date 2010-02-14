@@ -1,5 +1,5 @@
 # mischacks – Miscellaneous methods that may or may not be useful
-# Copyright © 2009 Johan Kiviniemi
+# Copyright © 2010 Johan Kiviniemi
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above

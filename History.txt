@@ -3,6 +3,7 @@
 * Update README.
 * Test best_datasync more thoroughly.
 * Switch to jeweler from hoe.
+* Update copyright year.
 
 === 0.0.5 / 2009-06-28
 
