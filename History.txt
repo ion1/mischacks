@@ -1,4 +1,8 @@
-=== UNRELEASED / UNRELEASED
+=== 0.1.1 / 2010-08-25
+
+* Reupload 0.1.0 with fixed file permissions.
+
+=== 0.1.0 / 2010-02-14
 
 * Update README.
 * Test best_datasync more thoroughly.
