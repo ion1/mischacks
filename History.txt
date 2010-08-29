@@ -1,3 +1,7 @@
+=== UNRELEASED / UNRELEASED
+
+* Add Random.
+
 === 0.1.1 / 2010-08-25
 
 * Reupload 0.1.0 with fixed file permissions.

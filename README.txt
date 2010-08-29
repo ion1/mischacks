@@ -31,6 +31,12 @@ dump an uncaught exception.
 
 IO#best_datasync:: Try fdatasync, falling back to fsync, falling back to flush.
 
+Random#exp:: Return a random integer 0 ≤ n < 2^argument (using SecureRandom).
+
+Random#float:: Return a random float 0.0 ≤ n < argument (using SecureRandom).
+
+Random#int:: Return a random integer 0 ≤ n < argument (using SecureRandom).
+
 == FEATURES/PROBLEMS:
 
 The sh method is only safe if your sh script is safe. If unsure, add double
