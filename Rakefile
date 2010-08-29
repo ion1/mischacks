@@ -28,12 +28,9 @@ begin
   Jeweler::Tasks.new do |gemspec|
     gemspec.name = "mischacks"
     gemspec.summary = "Miscellaneous methods that may or may not be useful"
-    gemspec.description = \
-      "sh: Safely pass untrusted parameters to sh scripts.  " \
-      "overwrite: Safely replace a file.  " \
-      "Exception#to_formatted_string: Return a string that looks like how Ruby would dump an uncaught exception.  " \
-      "Random: Generate various types of random numbers using SecureRandom.  " \
-      "Password: A small wrapper for String#crypt that does secure salt generation and easy password verification."
+    gemspec.description = File.read(File.dirname(__FILE__)+'/README.txt').
+                          sub(/.*^=+ DESCRIPTION[^\n]*\n*/m, '').
+                          sub(/\n*^=.*/m, '')
     gemspec.email = "devel@johan.kiviniemi.name"
     gemspec.homepage = "http://johan.kiviniemi.name/software/mischacks/"
     gemspec.authors = ["Johan Kiviniemi"]

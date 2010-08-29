@@ -1,3 +1,7 @@
+=== UNRELEASED / UNRELEASED
+
+* When generating the gem, grab description from README.
+
 === 0.2.0 / 2010-08-29
 
 * Add Random.
