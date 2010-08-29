@@ -19,14 +19,6 @@ require 'mischacks/password'
 require 'set'
 
 describe MiscHacks::Password do
-  def match expected
-    simple_matcher("match #{expected.inspect}") do |given, matcher|
-      matcher.failure_message = "expected #{given.inspect} to match #{expected.inspect}"
-      matcher.negative_failure_message = "expected #{given.inspect} not to match #{expected.inspect}"
-      given.match? expected
-    end
-  end
-
   before :all do
     @many = 1000
 
@@ -117,14 +109,26 @@ describe MiscHacks::Password do
     end
   end
 
-  describe 'match?' do
+  describe '=~' do
     it 'should verify whether the cleartext parameter matches the encrypted password' do
       %w{foo bar baz}.each do |password|
         pw = MiscHacks::Password.new_from_password password
-        pw.should match password
-        pw.should_not match "#{password}x"
-        pw.should_not match ''
+        pw.should =~ password
+        pw.should_not =~ "#{password}x"
+        pw.should_not =~ ''
       end
+    end
+  end
+
+  describe '==' do
+    it 'should verify whether the encrypted parameter matches the encrypted password' do
+      pw = MiscHacks::Password.new @encrypted
+
+      pw.should == @encrypted
+      pw.should == MiscHacks::Password.new(@encrypted)
+
+      pw.should_not == 'foo'
+      pw.should_not == MiscHacks::Password.new_from_password("#{@password}x")
     end
   end
 

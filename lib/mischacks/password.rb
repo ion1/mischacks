@@ -39,8 +39,12 @@ module MiscHacks
       end
     end
 
-    def match? password
+    def =~ password
       to_s == password.crypt(@salt)
+    end
+
+    def == other
+      to_s == other.to_s
     end
 
     def to_s

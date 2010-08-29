@@ -124,7 +124,7 @@ Password::
 
   # Verify password
   password = MiscHacks::Password.new password_from_database
-  password.match? cleartext_from_user  # ⇒ true/false
+  password =~ cleartext_from_user  # ⇒ true/false
 
 == REQUIREMENTS:
 

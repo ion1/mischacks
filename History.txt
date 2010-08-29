@@ -2,6 +2,7 @@
 
 * When generating the gem, grab description from README.
 * Update README.
+* Password: Switch from match? to =~; implement ==.
 
 === 0.2.0 / 2010-08-29
 
