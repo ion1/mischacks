@@ -34,7 +34,7 @@ module MiscHacks
     fork_and_check do
       do_and_exit! do
         env.each_pair do |k, v| ENV[k.to_s] = v.to_s end
-        exec *(%W{sh -e -c #{cmd} sh} + args.map {|a| a.to_s })
+        exec *(%W{sh -e -c #{cmd} sh} + args.map(&:to_s))
       end
     end
 
