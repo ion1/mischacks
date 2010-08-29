@@ -54,6 +54,10 @@ module MiscHacks
     def int n
       float(n).floor
     end
+
+    def inspect
+      "#<#{self.class}: pool_size=#{@pool_size}>"
+    end
   end
 
   RANDOM = Random.instance
