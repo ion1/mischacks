@@ -6,7 +6,8 @@
 
 Miscellaneous methods that may or may not be useful.
 
-sh:: Safely pass untrusted parameters to sh scripts.
+sh:: Safely pass untrusted parameters to sh scripts. Raise an exception if the
+script returns a non-zero value.
 
 fork_and_check:: Run a block in a forked process and raise an exception if the
 process returns a non-zero value.
@@ -48,16 +49,23 @@ ever use an untrusted variable as a command.
 
 == SYNOPSIS:
 
-  # sh
+sh::
+
+Note that the scripts are run with set -e.
+
+  MiscHacks.sh 'exec ls'
 
   MiscHacks.sh %q{
     diff -u "$1" "$2" | tr a-z A-Z >"$output"
   }, '/dev/null', '/etc/motd', :output => 'foo'
 
   unsafe_str = %q{" 'foo' $(bar) `baz` "}
-  MiscHacks.sh 'printf "%s\n" "$1"', unsafe_str
+  MiscHacks.sh 'exec printf "%s\n" "$1"', unsafe_str
 
-  # fork_and_check
+  # Raises MiscHacks::ChildError.
+  MiscHacks.sh 'exec false'
+
+fork_and_check::
 
   # These examples raise MiscHacks::ChildError.
   MiscHacks.fork_and_check do exit! 42 end
@@ -67,7 +75,7 @@ ever use an untrusted variable as a command.
   # Does not raise an error.
   MiscHacks.fork_and_check do exit! 0 end
 
-  # do_and_exit
+do_and_exit::
 
   # Prints foo if there are no failures. If anything fails, raises an
   # exception.
@@ -77,23 +85,23 @@ ever use an untrusted variable as a command.
     end
   end
 
-  # overwrite
+overwrite::
 
   MiscHacks.overwrite 'myconfig' do |io|
-    io << config.to_yaml
+    config.to_yaml io
   end
 
-  # tempname_for
+tempname_for::
 
   MiscHacks.tempname_for '/foo/bar/baz'  # => '/foo/bar/.baz.klyce3f517qkh9l'
 
-  # try_n_times
+try_n_times::
 
   io = MiscHacks.try_n_times do
     File.open path, File::RDWR|File::CREAT|File::EXCL
   end
 
-  # Exception#to_formatted_string
+Exception#to_formatted_string::
 
   begin
     # Do something
@@ -101,14 +109,31 @@ ever use an untrusted variable as a command.
     warn e.to_formatted_string
   end
 
+Random::
+
+  n = MiscHacks::RANDOM.exp 4    # 0   ≤ n < 2⁴
+  n = MiscHacks::RANDOM.float    # 0.0 ≤ n < 1.0
+  n = MiscHacks::RANDOM.float 4  # 0.0 ≤ n < 4.0
+  n = MiscHacks::RANDOM.int 4    # 0   ≤ n < 4
+
+Password::
+
+  # New password
+  password = MiscHacks::Password.new_from_password cleartext_from_user
+  store_in_database password.to_s  # encrypted
+
+  # Verify password
+  password = MiscHacks::Password.new password_from_database
+  password.match? cleartext_from_user  # ⇒ true/false
+
 == REQUIREMENTS:
 
-* POSIX sh
-* A system that implements fork
+* POSIX sh for the sh method
+* A system that implements fork for some methods
 
 == INSTALL:
 
-* sudo gem install ion1-mischacks --source http://gems.github.com/
+* sudo gem install mischacks
 
 == LICENSE:
 

@@ -1,6 +1,7 @@
 === UNRELEASED / UNRELEASED
 
 * When generating the gem, grab description from README.
+* Update README.
 
 === 0.2.0 / 2010-08-29
 
