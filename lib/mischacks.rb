@@ -17,7 +17,7 @@ require 'mischacks/password'
 require 'mischacks/random'
 
 module MiscHacks
-  VERSION = '0.0.5'
+  VERSION = File.read(File.dirname(__FILE__)+'/../VERSION').chomp
 
   class ChildError < RuntimeError
     attr_reader :status
