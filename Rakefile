@@ -32,7 +32,8 @@ begin
       "sh: Safely pass untrusted parameters to sh scripts.  " \
       "overwrite: Safely replace a file.  " \
       "Exception#to_formatted_string: Return a string that looks like how Ruby would dump an uncaught exception.  " \
-      "Random: Generate various types of random numbers using SecureRandom."
+      "Random: Generate various types of random numbers using SecureRandom.  " \
+      "Password: A small wrapper for String#crypt that does secure salt generation and easy password verification."
     gemspec.email = "devel@johan.kiviniemi.name"
     gemspec.homepage = "http://johan.kiviniemi.name/software/mischacks/"
     gemspec.authors = ["Johan Kiviniemi"]

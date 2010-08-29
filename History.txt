@@ -1,6 +1,7 @@
 === UNRELEASED / UNRELEASED
 
 * Add Random.
+* Add Password.
 
 === 0.1.1 / 2010-08-25
 

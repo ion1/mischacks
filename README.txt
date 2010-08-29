@@ -37,6 +37,9 @@ Random#float:: Return a random float 0.0 ≤ n < argument (using SecureRandom).
 
 Random#int:: Return a random integer 0 ≤ n < argument (using SecureRandom).
 
+Password:: A small wrapper for String#crypt that does secure salt generation
+and easy password verification.
+
 == FEATURES/PROBLEMS:
 
 The sh method is only safe if your sh script is safe. If unsure, add double

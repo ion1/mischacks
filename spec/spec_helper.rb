@@ -23,6 +23,21 @@ class Object
   end
 end
 
+module Enumerable
+  def mean
+    inject(:+) / length.to_f
+  end
+
+  def stddev
+    Math.sqrt variance
+  end
+
+  def variance
+    mean_ = mean
+    inject(0) {|sum, e| sum + (e - mean_)**2} / length.to_f
+  end
+end
+
 Spec::Matchers.define :exit_with do |expected|
   match do |block|
     @status = 0
